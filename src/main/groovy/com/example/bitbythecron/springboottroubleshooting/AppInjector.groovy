@@ -7,6 +7,8 @@ import com.codahale.metrics.ScheduledReporter
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
 import java.util.concurrent.TimeUnit
 
@@ -28,5 +30,15 @@ class AppInjector implements InjectionConstants {
             .convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MILLISECONDS)
             .build()
+    }
+
+    @Bean
+    DelegatingWebMvcConfiguration delegatingWebMvcConfiguration() {
+        new DelegatingWebMvcConfiguration() {
+            @Override
+            RequestMappingHandlerMapping requestMappingHandlerMapping() {
+                new ApiVersionRequestMappingHandlerMapping('v')
+            }
+        }
     }
 }
