@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.8.RELEASE")
+    }
+}
+
+plugins {
+    id 'groovy'
+    id 'application'
+}
+
+apply plugin: 'org.springframework.boot'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+configurations {
+    dev
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+
+    compile(
+        'org.codehaus.groovy:groovy-all:2.4.12'
+        ,'com.google.inject:guice:4.1.0'
+        ,'ch.qos.logback:logback-classic:1.2.3'
+        ,'org.slf4j:jul-to-slf4j:1.7.25'
+        ,'org.apache.logging.log4j:log4j-to-slf4j:2.9.1'
+        ,'commons-cli:commons-cli:1.4'
+        ,'org.apache.commons:commons-lang3:3.7'
+        ,'io.dropwizard:dropwizard-metrics:1.2.2'
+
+        ,'org.springframework.boot:spring-boot-starter-jetty'
+        ,'org.springframework.boot:spring-boot-starter-actuator'
+    )
+
+    dev('org.springframework.boot:spring-boot-devtools')
+
+    testCompile(
+        'org.spockframework:spock-core:1.0-groovy-2.4'
+        ,'junit:junit:4.12'
+    )
+}
+
+jar {
+    baseName = 'spring-boot-troubleshooting'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+bootRun {
+    if(project.hasProperty('debugMode')) {
+        jvmArgs = [ "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005" ]
+    }
+
+    classpath = sourceSets.main.runtimeClasspath + configurations.dev
+}

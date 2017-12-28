@@ -1,0 +1,32 @@
+logging:
+  config: 'logback.groovy'
+server:
+  port: 9200
+  error:
+    whitelabel:
+      enabled: false
+spring:
+  cache:
+    type: none
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://${db.host}:${db.port:3306}/pg_db?useSSL=false
+    username: root
+    testWhileIdle: true
+    validationQuery: SELECT 1
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: true
+      hibernate.hbm2ddl.auto: validate
+flimflam:
+  dataMode: ${dataMode:Live}
+  dataDir: ${dataDir:.}
