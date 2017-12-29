@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration
+import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
 import java.util.concurrent.TimeUnit
 
+@EnableWebMvc
 @Configuration
 class AppInjector implements InjectionConstants {
     @Bean
@@ -27,9 +29,14 @@ class AppInjector implements InjectionConstants {
 
     ScheduledReporter metricReporter(MetricRegistry metricRegistry) {
         ConsoleReporter.forRegistry(metricRegistry)
-            .convertRatesTo(TimeUnit.SECONDS)
-            .convertDurationsTo(TimeUnit.MILLISECONDS)
-            .build()
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build()
+    }
+
+    @Bean
+    ApiVersionRequestMappingHandlerMapping getApiMapping() {
+        new ApiVersionRequestMappingHandlerMapping('v')
     }
 
     @Bean
@@ -37,8 +44,9 @@ class AppInjector implements InjectionConstants {
         new DelegatingWebMvcConfiguration() {
             @Override
             RequestMappingHandlerMapping requestMappingHandlerMapping() {
-                new ApiVersionRequestMappingHandlerMapping('v')
+                getApiMapping()
             }
+
         }
     }
 }
